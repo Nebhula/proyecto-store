@@ -2,48 +2,81 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>PWA Store</title>
+<title>PWA Store Pro</title>
 
 <style>
 body {
+  margin: 0;
   font-family: Arial;
-  background: #0d0d0d;
+  background: #0b0b0b;
   color: white;
-  text-align: center;
 }
 
-h1 { margin-top: 20px; }
+header {
+  padding: 20px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+}
 
 input {
-  padding: 10px;
-  width: 80%;
-  margin: 10px;
-  border-radius: 8px;
+  width: 90%;
+  margin: 10px auto;
+  display: block;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 10px;
 }
 
 .card {
-  background: #1c1c1c;
-  margin: 10px auto;
-  padding: 15px;
-  width: 280px;
-  border-radius: 12px;
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.03);
 }
 
 img {
-  width: 70px;
+  width: 60px;
   border-radius: 12px;
 }
 
-button {
-  margin-top: 10px;
+small {
+  opacity: 0.6;
+}
+
+/* FICHA APP */
+.page {
+  display: none;
+  padding: 20px;
+}
+
+.page img {
+  width: 90px;
+}
+
+.btn {
+  background: white;
+  color: black;
   padding: 10px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
+  margin-top: 10px;
   cursor: pointer;
 }
 
-/* MODAL */
+/* MODAL INSTALACIÓN */
 .modal {
   display: none;
   position: fixed;
@@ -53,117 +86,149 @@ button {
   align-items: center;
 }
 
-.modal-box {
+.box {
   background: #222;
   padding: 20px;
-  border-radius: 12px;
+  border-radius: 14px;
   max-width: 300px;
-}
-
-.close {
-  background: red;
-  color: white;
-  margin-top: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🔥 Mi PWA Store</h1>
+<header>🔥 PWA Store Pro</header>
+
+<!-- HOME -->
+<div id="home">
 
 <input id="search" placeholder="Buscar apps...">
 
-<div id="apps"></div>
+<div class="grid" id="grid"></div>
+
+</div>
+
+<!-- APP PAGE -->
+<div class="page" id="appPage">
+  <img id="appIcon">
+  <h2 id="appName"></h2>
+  <p id="appDesc"></p>
+  <small id="appCat"></small>
+
+  <br>
+
+  <button class="btn" onclick="installApp()">
+    Instalar App
+  </button>
+
+  <button class="btn" onclick="backHome()">
+    Volver
+  </button>
+</div>
 
 <!-- MODAL -->
 <div class="modal" id="modal">
-  <div class="modal-box">
-    <h2>📲 Instalar App</h2>
+  <div class="box">
+    <h3>📲 Instalación</h3>
     <p id="msg"></p>
-
-    <button onclick="openApp()">Ir a la web</button>
-    <br>
-
-    <button class="close" onclick="closeModal()">Cerrar</button>
+    <button onclick="goApp()">Abrir web</button>
+    <br><br>
+    <button onclick="closeModal()">Cerrar</button>
   </div>
 </div>
 
 <script>
 const apps = [
   {
-    name: "Blog 1",
+    id: 1,
+    name: "Blog Noticias",
     url: "https://tu-blog1.blogspot.com",
     icon: "https://via.placeholder.com/100",
-    desc: "Noticias"
+    desc: "Noticias diarias",
+    cat: "Blog"
   },
   {
-    name: "Blog 2",
+    id: 2,
+    name: "Tienda Demo",
     url: "https://tu-blog2.blogspot.com",
     icon: "https://via.placeholder.com/100",
-    desc: "Tienda"
+    desc: "Ecommerce simple",
+    cat: "Tienda"
   }
 ];
 
-let selectedApp = "";
+let currentApp = null;
 
-function detectBrowser() {
-  const ua = navigator.userAgent.toLowerCase();
-
-  if (/iphone|ipad|ipod/.test(ua)) {
-    return "📱 iPhone: Pulsa compartir → Añadir a pantalla de inicio";
-  }
-
-  if (ua.includes("android")) {
-    return "🤖 Android: Menú ⋮ → Instalar app o Añadir a inicio";
-  }
-
-  return "💻 Pulsa instalar en el navegador si aparece opción";
-}
-
+/* HOME RENDER */
 function render(list) {
-  const container = document.getElementById("apps");
-  container.innerHTML = "";
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
   list.forEach(app => {
-    container.innerHTML += `
-      <div class="card">
+    grid.innerHTML += `
+      <div class="card" onclick="openAppPage(${app.id})">
         <img src="${app.icon}">
-        <h3>${app.name}</h3>
-        <p>${app.desc}</p>
-        <button onclick="install('${app.url}')">
-          Instalar
-        </button>
+        <h4>${app.name}</h4>
+        <small>${app.cat}</small>
       </div>
     `;
   });
 }
 
-function install(url) {
-  selectedApp = url;
+/* SEARCH */
+document.getElementById("search").addEventListener("input", e => {
+  const v = e.target.value.toLowerCase();
+  render(apps.filter(a => a.name.toLowerCase().includes(v)));
+});
 
+/* APP PAGE */
+function openAppPage(id) {
+  currentApp = apps.find(a => a.id === id);
+
+  document.getElementById("home").style.display = "none";
+  document.getElementById("appPage").style.display = "block";
+
+  document.getElementById("appIcon").src = currentApp.icon;
+  document.getElementById("appName").innerText = currentApp.name;
+  document.getElementById("appDesc").innerText = currentApp.desc;
+  document.getElementById("appCat").innerText = currentApp.cat;
+}
+
+function backHome() {
+  document.getElementById("home").style.display = "block";
+  document.getElementById("appPage").style.display = "none";
+}
+
+/* INSTALL FLOW */
+function installApp() {
   document.getElementById("msg").innerText = detectBrowser();
   document.getElementById("modal").style.display = "flex";
 }
 
-function openApp() {
-  window.open(selectedApp, "_blank");
+function detectBrowser() {
+  const ua = navigator.userAgent.toLowerCase();
+
+  if (/iphone|ipad|ipod/.test(ua)) {
+    return "iPhone: Compartir → Añadir a pantalla de inicio";
+  }
+
+  if (ua.includes("android")) {
+    return "Android: ⋮ menú → Instalar app";
+  }
+
+  return "Busca opción 'Instalar app' en el navegador";
+}
+
+/* MODAL */
+function goApp() {
+  window.open(currentApp.url, "_blank");
 }
 
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
 
-document.getElementById("search").addEventListener("input", e => {
-  const val = e.target.value.toLowerCase();
-
-  const filtered = apps.filter(a =>
-    a.name.toLowerCase().includes(val)
-  );
-
-  render(filtered);
-});
-
+/* INIT */
 render(apps);
 </script>
 
