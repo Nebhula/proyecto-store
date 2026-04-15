@@ -1,236 +1,204 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>PWA Store Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Directorio PWA</title>
+
+<link href='https://use.fontawesome.com/releases/v6.4.0/css/all.css' rel='stylesheet'/>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0b0b0b;
-  color: white;
+body { font-family: Arial; margin:0; padding:20px; background:#f5f5f5; }
+
+.open-modal-btn {
+    background:#1180bd;
+    color:white;
+    border:none;
+    border-radius:50px;
+    padding:16px 32px;
+    font-weight:700;
+    cursor:pointer;
 }
 
-header {
-  padding: 20px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
+/* ===== TU MODAL ===== */
+.socnas-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #1180bd;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
 }
 
-input {
-  width: 90%;
-  margin: 10px auto;
-  display: block;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
+.modal-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    position: relative;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-  padding: 10px;
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 30px;
+    background: white;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
 }
 
-.card {
-  background: #1a1a1a;
-  padding: 12px;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: 0.2s;
+.logo-container {
+    display:flex;
+    justify-content:center;
+    padding:20px;
 }
 
-.card:hover {
-  transform: scale(1.03);
+.logo-image {
+    width: 250px;
+    max-width: 90%;
 }
 
-img {
-  width: 60px;
-  border-radius: 12px;
+.modal-left {
+    text-align:center;
 }
 
-small {
-  opacity: 0.6;
+.app-mockup {
+    max-width: 90%;
 }
 
-/* FICHA APP */
-.page {
-  display: none;
-  padding: 20px;
+.modal-right {
+    padding:20px;
+    text-align:center;
 }
 
-.page img {
-  width: 90px;
+.badge {
+    display:inline-block;
+    background:rgba(255,255,255,0.2);
+    color:white;
+    padding:10px 20px;
+    border-radius:40px;
+    margin-bottom:10px;
 }
 
-.btn {
-  background: white;
-  color: black;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  margin-top: 10px;
-  cursor: pointer;
+h1 {
+    color:white;
 }
 
-/* MODAL INSTALACIÓN */
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.95);
-  justify-content: center;
-  align-items: center;
+.btn-install, .btn-web {
+    display:block;
+    margin:10px auto;
+    padding:14px;
+    border-radius:30px;
+    border:none;
+    cursor:pointer;
+    width:80%;
 }
 
-.box {
-  background: #222;
-  padding: 20px;
-  border-radius: 14px;
-  max-width: 300px;
-}
+.btn-install { background:white; color:#1180bd; font-weight:bold; }
+.btn-web { background:transparent; border:2px solid white; color:white; }
 </style>
 </head>
 
 <body>
 
-<header>🔥 PWA Store Pro</header>
+<h2>📱 Directorio PWA</h2>
 
-<!-- HOME -->
-<div id="home">
-
-<input id="search" placeholder="Buscar apps...">
-
-<div class="grid" id="grid"></div>
-
-</div>
-
-<!-- APP PAGE -->
-<div class="page" id="appPage">
-  <img id="appIcon">
-  <h2 id="appName"></h2>
-  <p id="appDesc"></p>
-  <small id="appCat"></small>
-
-  <br>
-
-  <button class="btn" onclick="installApp()">
-    Instalar App
-  </button>
-
-  <button class="btn" onclick="backHome()">
-    Volver
+<!-- WEB 1 -->
+<div>
+  <h3>Xataka</h3>
+  <button class="open-modal-btn"
+    data-title="Xataka"
+    data-url="https://xataka.com"
+    data-logo="https://via.placeholder.com/200">
+    INSTALAR
   </button>
 </div>
 
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <div class="box">
-    <h3>📲 Instalación</h3>
-    <p id="msg"></p>
-    <button onclick="goApp()">Abrir web</button>
-    <br><br>
-    <button onclick="closeModal()">Cerrar</button>
-  </div>
+<!-- WEB 2 -->
+<div>
+  <h3>El País</h3>
+  <button class="open-modal-btn"
+    data-title="El País"
+    data-url="https://elpais.com"
+    data-logo="https://via.placeholder.com/200">
+    INSTALAR
+  </button>
+</div>
+
+<!-- ===== TU MODAL ORIGINAL ===== -->
+<div class='socnas-overlay' id='socnasOverlay'>
+
+    <div class='modal-wrapper'>
+
+        <button class='modal-close' id='closeSocnasModal'>X</button>
+
+        <div class='logo-container'>
+            <img class='logo-image' id="logoImage"
+            src='https://via.placeholder.com/200'/>
+        </div>
+
+        <div class='modal-right'>
+
+            <span class='badge' id="badgeText">
+                INSTALA LA PWA
+            </span>
+
+            <h1 id="titleText">APP</h1>
+
+            <button class="btn-install">
+                INSTALAR APP
+            </button>
+
+            <button class="btn-web" id="socnasWebBtn">
+                ENTRAR A LA WEB
+            </button>
+
+        </div>
+    </div>
 </div>
 
 <script>
-const apps = [
-  {
-    id: 1,
-    name: "Blog Noticias",
-    url: "https://tu-blog1.blogspot.com",
-    icon: "https://via.placeholder.com/100",
-    desc: "Noticias diarias",
-    cat: "Blog"
-  },
-  {
-    id: 2,
-    name: "Tienda Demo",
-    url: "https://tu-blog2.blogspot.com",
-    icon: "https://via.placeholder.com/100",
-    desc: "Ecommerce simple",
-    cat: "Tienda"
-  }
-];
+let currentURL = "";
 
-let currentApp = null;
+// abrir modal desde cualquier web del directorio
+document.querySelectorAll('.open-modal-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
 
-/* HOME RENDER */
-function render(list) {
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
+        const title = this.dataset.title;
+        const url = this.dataset.url;
+        const logo = this.dataset.logo;
 
-  list.forEach(app => {
-    grid.innerHTML += `
-      <div class="card" onclick="openAppPage(${app.id})">
-        <img src="${app.icon}">
-        <h4>${app.name}</h4>
-        <small>${app.cat}</small>
-      </div>
-    `;
-  });
-}
+        currentURL = url;
 
-/* SEARCH */
-document.getElementById("search").addEventListener("input", e => {
-  const v = e.target.value.toLowerCase();
-  render(apps.filter(a => a.name.toLowerCase().includes(v)));
+        document.getElementById('titleText').innerText = title;
+        document.getElementById('logoImage').src = logo;
+        document.getElementById('badgeText').innerText = "INSTALA LA PWA DE " + title;
+
+        document.getElementById('socnasOverlay').style.display = 'flex';
+    });
 });
 
-/* APP PAGE */
-function openAppPage(id) {
-  currentApp = apps.find(a => a.id === id);
+// cerrar modal
+document.getElementById('closeSocnasModal').onclick = function() {
+    document.getElementById('socnasOverlay').style.display = 'none';
+};
 
-  document.getElementById("home").style.display = "none";
-  document.getElementById("appPage").style.display = "block";
-
-  document.getElementById("appIcon").src = currentApp.icon;
-  document.getElementById("appName").innerText = currentApp.name;
-  document.getElementById("appDesc").innerText = currentApp.desc;
-  document.getElementById("appCat").innerText = currentApp.cat;
-}
-
-function backHome() {
-  document.getElementById("home").style.display = "block";
-  document.getElementById("appPage").style.display = "none";
-}
-
-/* INSTALL FLOW */
-function installApp() {
-  document.getElementById("msg").innerText = detectBrowser();
-  document.getElementById("modal").style.display = "flex";
-}
-
-function detectBrowser() {
-  const ua = navigator.userAgent.toLowerCase();
-
-  if (/iphone|ipad|ipod/.test(ua)) {
-    return "iPhone: Compartir → Añadir a pantalla de inicio";
-  }
-
-  if (ua.includes("android")) {
-    return "Android: ⋮ menú → Instalar app";
-  }
-
-  return "Busca opción 'Instalar app' en el navegador";
-}
-
-/* MODAL */
-function goApp() {
-  window.open(currentApp.url, "_blank");
-}
-
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
-}
-
-/* INIT */
-render(apps);
+// entrar web
+document.getElementById('socnasWebBtn').onclick = function() {
+    window.open(currentURL, '_blank');
+};
 </script>
 
 </body>
 </html>
+
